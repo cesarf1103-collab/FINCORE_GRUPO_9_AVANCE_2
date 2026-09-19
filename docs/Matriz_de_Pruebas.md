@@ -21,7 +21,10 @@ Verificar mediante pruebas funcionales que las principales operaciones del siste
 | TC-011 | HU-008 | Transferencia sin fondos suficientes | Monto mayor al saldo disponible | El sistema rechaza la transferencia | Pendiente |
 | TC-012 | HU-008 | Transferencia a cuenta inexistente | Cuenta destino no registrada | El sistema rechaza la transferencia y muestra un mensaje de error | Pendiente |
 | TC-013 | HU-008 | Transferencia con monto negativo | Monto menor que $0.00 | El sistema rechaza la transferencia | Pendiente |
-
+| TC-014 | HU-004 | Consulta de saldo exitosa | Cuenta existente con saldo disponible | El sistema muestra correctamente el saldo de la cuenta | Pendiente |
+| TC-015 | HU-005 | Consulta de historial | Cuenta existente con movimientos registrados | El sistema muestra correctamente el historial de transacciones | Pendiente |
+| TC-016 | HU-006 | Depósito a terceros exitoso | Cuenta destino existente y monto positivo | El sistema realiza el depósito y actualiza correctamente el saldo | Pendiente |
+| TC-017 | HU-007 | Retiro en ventanilla exitoso | Cuenta existente con saldo suficiente y monto válido | El sistema realiza el retiro y actualiza correctamente el saldo | Pendiente |
 ## Criterio de resultado
 
 - **PASS:** el sistema se comporta de acuerdo con el resultado esperado.
