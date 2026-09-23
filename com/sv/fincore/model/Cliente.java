@@ -3,6 +3,7 @@ package com.sv.fincore.model;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 
 public class Cliente {
     private String id;
