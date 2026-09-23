@@ -2,6 +2,7 @@ package com.sv.fincore.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.io.Serializable;
 
 public class Transaccion {
     private String idTransaccion;
