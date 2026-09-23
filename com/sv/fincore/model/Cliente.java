@@ -1,10 +1,13 @@
 package com.sv.fincore.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cliente {
+public class Cliente implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String id;
     private String dui;
     private String nombre;
