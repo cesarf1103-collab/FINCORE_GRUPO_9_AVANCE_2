@@ -3,6 +3,7 @@ package com.sv.fincore.dao;
 import com.sv.fincore.model.Transaccion;
 import com.sv.fincore.util.ArchivoUtil;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -12,11 +13,11 @@ public class TransaccionDAO {
 
     private List<Transaccion> transacciones;
 
-    public TransaccionDAO() {
+    public TransaccionDAO() throws IOException, ClassNotFoundException {
         this.transacciones = ArchivoUtil.cargar(RUTA, new ArrayList<>());
     }
 
-    public void guardar(Transaccion t) {
+    public void guardar(Transaccion t) throws IOException {
         transacciones.add(t);
         persistir();
     }
@@ -45,7 +46,7 @@ public class TransaccionDAO {
                         Collectors.counting()));
     }
 
-    private void persistir() {
+    private void persistir() throws IOException {
         ArchivoUtil.guardar(RUTA, transacciones);
     }
 }
