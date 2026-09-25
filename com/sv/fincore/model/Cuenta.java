@@ -1,15 +1,18 @@
 package com.sv.fincore.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cuenta {
+public class Cuenta implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String numeroCuenta;
     private String duiCliente;
     private BigDecimal saldo;
-    private String tipoCuenta; 
+    private String tipoCuenta;
     private LocalDateTime fechaApertura;
     private boolean activa;
     private List<Transaccion> historial;
@@ -24,7 +27,6 @@ public class Cuenta {
         this.historial = new ArrayList<>();
     }
 
-    // Getters y Setters
     public String getNumeroCuenta() { return numeroCuenta; }
     public String getDuiCliente() { return duiCliente; }
     public BigDecimal getSaldo() { return saldo; }
