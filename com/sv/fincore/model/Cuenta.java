@@ -33,8 +33,29 @@ public class Cuenta {
     public boolean isActiva() { return activa; }
     public List<Transaccion> getHistorial() { return historial; }
 
-    public void setSaldo(BigDecimal saldo) { this.saldo = saldo; }
-    public void setActiva(boolean activa) { this.activa = activa; }
+    public void setSaldo(BigDecimal saldo) {
+        if (saldo != null && saldo.compareTo(BigDecimal.ZERO) >= 0) {
+            this.saldo = saldo;
+        } else {
+            System.out.println("Saldo inválido: no puede ser negativo");
+        }
+    }
+    public void setTipoCuenta(String tipoCuenta) {
+        if (tipoCuenta != null &&
+                (tipoCuenta.equalsIgnoreCase("Ahorro") || tipoCuenta.equalsIgnoreCase("Corriente"))) {
+            this.tipoCuenta = tipoCuenta;
+        } else {
+            System.out.println("Tipo de cuenta inválido");
+        }
+    }
+
+    public void setActiva(boolean activa) {
+        this.activa = activa;
+        if (!activa) {
+            System.out.println("Cuenta desactivada");
+        }
+    }
+
 
     public void agregarTransaccion(Transaccion transaccion) {
         this.historial.add(transaccion);

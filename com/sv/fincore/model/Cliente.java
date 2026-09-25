@@ -37,12 +37,51 @@ public class Cliente {
     public LocalDate getFechaNacimiento() { return fechaNacimiento; }
     public List<String> getNumerosCuenta() { return numerosCuenta; }
 
-    public void setNombre(String nombre) { this.nombre = nombre; }
-    public void setApellidos(String apellidos) { this.apellidos = apellidos; }
-    public void setCorreo(String correo) { this.correo = correo; }
-    public void setTelefono(String telefono) { this.telefono = telefono; }
-    public void setDireccion(String direccion) { this.direccion = direccion; }
-    public void setFechaNacimiento(LocalDate fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
+    public void setNombre(String nombre) {
+        if (nombre != null && !nombre.trim().isEmpty()) {
+            this.nombre = nombre;
+        } else {
+            System.out.println("Nombre inválido");
+        }
+    }
+    public void setApellidos(String apellidos) {
+        if (apellidos != null && !apellidos.trim().isEmpty()) {
+            this.apellidos = apellidos;
+        } else {
+            System.out.println("Apellidos inválidos");
+        }
+    }
+    public void setCorreo(String correo) {
+        if (correo != null && correo.contains("@")) {
+            this.correo = correo;
+        } else {
+            System.out.println("Correo inválido");
+        }
+    }
+
+    public void setTelefono(String telefono) {
+        if (telefono != null && telefono.matches("\\d{8}")) {
+            this.telefono = telefono;
+        } else {
+            System.out.println("Teléfono inválido");
+        }
+    }
+    public void setDireccion(String direccion) {
+        if (direccion != null && !direccion.trim().isEmpty()) {
+            this.direccion = direccion;
+        } else {
+            System.out.println("Dirección inválida");
+        }
+    }
+
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        if (fechaNacimiento != null && !fechaNacimiento.isAfter(LocalDate.now())) {
+            this.fechaNacimiento = fechaNacimiento;
+        } else {
+            System.out.println("Fecha de nacimiento inválida");
+        }
+    }
+
 
     public void agregarCuenta(String numeroCuenta) {
         this.numerosCuenta.add(numeroCuenta);
