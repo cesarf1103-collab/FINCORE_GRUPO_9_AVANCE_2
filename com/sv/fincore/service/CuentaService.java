@@ -95,6 +95,13 @@ public CuentaService(ClienteService clienteService) {
         );
 
         cuenta.agregarTransaccion(transaccion);
+try {
+    cuentaDAO.guardar(cuenta);
+} catch (IOException e) {
+    cuenta.getHistorial().remove(transaccion);
+    cuenta.setSaldo(cuenta.getSaldo().subtract(monto));
+    return "No se pudo guardar el deposito";
+}
 
         return "Deposito exitoso";
     }
@@ -131,6 +138,13 @@ public CuentaService(ClienteService clienteService) {
         );
 
         cuenta.agregarTransaccion(transaccion);
+try {
+    cuentaDAO.guardar(cuenta);
+} catch (IOException e) {
+    cuenta.getHistorial().remove(transaccion);
+    cuenta.setSaldo(cuenta.getSaldo().add(monto));
+    return "No se pudo guardar el retiro";
+}
 
         return "Retiro exitoso";
     }
@@ -146,6 +160,10 @@ public CuentaService(ClienteService clienteService) {
             return "Cuenta no encontrada";
         }
 
+        if (cuentaOrigen.equals(cuentaDestino)) {
+            return "Las cuentas deben ser diferentes";
+        }
+        
         if (!origen.isActiva() || !destino.isActiva()) {
             return "Cuenta inactiva";
         }
@@ -186,7 +204,16 @@ public CuentaService(ClienteService clienteService) {
         origen.agregarTransaccion(salida);
         destino.agregarTransaccion(entrada);
 
-        return "Transferencia exitosa";
+        try {
+    cuentaDAO.guardar(origen);
+    return "Transferencia exitosa";
+} catch (IOException e) {
+    origen.getHistorial().remove(salida);
+    destino.getHistorial().remove(entrada);
+    origen.setSaldo(origen.getSaldo().add(monto));
+    destino.setSaldo(destino.getSaldo().subtract(monto));
+    return "No se pudo guardar la transferencia";
+}
     }
 
     public List<Transaccion> obtenerHistorial(String numeroCuenta) {
@@ -209,7 +236,12 @@ public CuentaService(ClienteService clienteService) {
         }
 
         cuenta.setActiva(false);
-
-        return "Cuenta desactivada";
+    try {
+    cuentaDAO.guardar(cuenta);
+    return "Cuenta desactivada";
+    } catch (IOException e) {
+    cuenta.setActiva(true);
+    return "No se pudo guardar la desactivación";
+}
     }
 }
