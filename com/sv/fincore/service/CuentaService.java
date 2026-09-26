@@ -41,15 +41,22 @@ public CuentaService(ClienteService clienteService) {
 
         Cuenta cuenta = new Cuenta(numeroCuenta, duiCliente, tipoCuenta);
 
-        try {
-    cuentaDAO.guardar(cuenta);
-    listaCuentas.add(cuenta);
+    try {
+        cuentaDAO.guardar(cuenta);
+        listaCuentas.add(cuenta);
+        cliente.agregarCuenta(numeroCuenta);
+        clienteService.guardarCliente(cliente);
+    return "Cuenta creada exitosamente";
 } catch (IOException e) {
+        cliente.getNumerosCuenta().remove(numeroCuenta);
+        listaCuentas.remove(cuenta);
+    try {
+        cuentaDAO.eliminar(numeroCuenta);
+    } catch (IOException errorAlRevertir) {
+        return "No se pudo completar ni revertir la creación de la cuenta";
+    }
     return "No se pudo guardar la cuenta";
 }
-        cliente.agregarCuenta(numeroCuenta);
-
-        return "Cuenta creada exitosamente";
     }
 
     public List<Cuenta> listarCuentas() {
