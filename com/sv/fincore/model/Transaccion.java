@@ -1,20 +1,23 @@
 package com.sv.fincore.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class Transaccion {
+public class Transaccion implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String idTransaccion;
     private String numeroCuenta;
-    private String tipo; 
+    private String tipo;
     private BigDecimal monto;
     private BigDecimal saldoPosterior;
     private LocalDateTime fecha;
     private String descripcion;
-    private String cuentaOrigen; 
-    private String cuentaDestino; 
+    private String cuentaOrigen;
+    private String cuentaDestino;
 
-    public Transaccion(String idTransaccion, String numeroCuenta, String tipo, 
+    public Transaccion(String idTransaccion, String numeroCuenta, String tipo,
                        BigDecimal monto, BigDecimal saldoPosterior, String descripcion) {
         this.idTransaccion = idTransaccion;
         this.numeroCuenta = numeroCuenta;
@@ -25,8 +28,7 @@ public class Transaccion {
         this.descripcion = descripcion;
     }
 
-    // Constructor para transferencias
-    public Transaccion(String idTransaccion, String numeroCuenta, String tipo, 
+    public Transaccion(String idTransaccion, String numeroCuenta, String tipo,
                        BigDecimal monto, BigDecimal saldoPosterior, String descripcion,
                        String cuentaOrigen, String cuentaDestino) {
         this(idTransaccion, numeroCuenta, tipo, monto, saldoPosterior, descripcion);
@@ -34,7 +36,6 @@ public class Transaccion {
         this.cuentaDestino = cuentaDestino;
     }
 
-    // Getters
     public String getIdTransaccion() { return idTransaccion; }
     public String getNumeroCuenta() { return numeroCuenta; }
     public String getTipo() { return tipo; }
