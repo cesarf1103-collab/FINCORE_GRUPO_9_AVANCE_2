@@ -57,23 +57,37 @@ public class ClienteService {
         return null;
     }
 
-    public String modificarCliente(String dui, String nuevoNombre, String nuevosApellidos, String nuevoCorreo, String nuevoTelefono, String nuevaDireccion) {
-        Cliente cliente = buscarPorDui(dui);
-        if (cliente != null) {
-            cliente.setNombre(nuevoNombre);
-            cliente.setApellidos(nuevosApellidos);
-            cliente.setCorreo(nuevoCorreo);
-            cliente.setTelefono(nuevoTelefono);
-            cliente.setDireccion(nuevaDireccion);
-            try {
-    clienteDAO.guardar(cliente);
-} catch (IOException e) {
-    return "No se pudo guardar la actualización del cliente";
-}
-            return "Cliente actualizado";
-        }
+public String modificarCliente(String dui, String nuevoNombre, String nuevosApellidos,
+                               String nuevoCorreo, String nuevoTelefono, String nuevaDireccion) {
+    Cliente cliente = buscarPorDui(dui);
+    if (cliente == null) {
         return "Cliente no encontrado";
     }
+
+    String nombreAnterior = cliente.getNombre();
+    String apellidosAnteriores = cliente.getApellidos();
+    String correoAnterior = cliente.getCorreo();
+    String telefonoAnterior = cliente.getTelefono();
+    String direccionAnterior = cliente.getDireccion();
+
+    cliente.setNombre(nuevoNombre);
+    cliente.setApellidos(nuevosApellidos);
+    cliente.setCorreo(nuevoCorreo);
+    cliente.setTelefono(nuevoTelefono);
+    cliente.setDireccion(nuevaDireccion);
+
+    try {
+        clienteDAO.guardar(cliente);
+        return "Cliente actualizado";
+    } catch (IOException e) {
+        cliente.setNombre(nombreAnterior);
+        cliente.setApellidos(apellidosAnteriores);
+        cliente.setCorreo(correoAnterior);
+        cliente.setTelefono(telefonoAnterior);
+        cliente.setDireccion(direccionAnterior);
+        return "No se pudo guardar la actualización del cliente";
+    }
+}
 
     public String eliminarCliente(String dui) {
         Cliente cliente = buscarPorDui(dui);
