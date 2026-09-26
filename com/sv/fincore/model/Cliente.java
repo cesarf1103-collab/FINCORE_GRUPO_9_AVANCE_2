@@ -58,4 +58,8 @@ public class Cliente extends Persona implements Serializable {
     public void agregarCuenta(String numeroCuenta) {
         this.numerosCuenta.add(numeroCuenta);
     }
+    @Override
+public String getTipoPersona() {
+    return "Cliente";
+    }
 }
