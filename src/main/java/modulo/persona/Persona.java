@@ -8,12 +8,20 @@ public abstract class Persona implements Serializable {
     protected String id;
     protected String nombre;
     protected String email;
+    protected String telefono;
+    protected String direccion;
 
     public Persona(String id, String nombre, String email) {
         this.id = id;
         this.nombre = nombre;
         this.email = email;
     }
+
+public Persona(String id, String nombre, String email, String telefono, String direccion) {
+    this(id, nombre, email);
+    this.telefono = telefono;
+    this.direccion = direccion;
+}
 
 
     public abstract String getTipoPersona();
@@ -41,4 +49,14 @@ public abstract class Persona implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public String getCorreo() { return email; }
+    public void setCorreo(String correo) { this.email = correo; }
+
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
+
+    public String getDireccion() { return direccion; }
+    public void setDireccion(String direccion) { this.direccion = direccion; }
+    
 }
