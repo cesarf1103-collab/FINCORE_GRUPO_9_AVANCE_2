@@ -89,6 +89,9 @@ public String modificarCliente(String dui, String nuevoNombre, String nuevosApel
     }
 }
 
+    public void guardarCliente(Cliente cliente) throws IOException {
+    clienteDAO.guardar(cliente);
+}
     public String eliminarCliente(String dui) {
         Cliente cliente = buscarPorDui(dui);
         if (cliente != null) {
