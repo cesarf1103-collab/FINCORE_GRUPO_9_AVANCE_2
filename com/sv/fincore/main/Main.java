@@ -1,5 +1,8 @@
 package com.sv.fincore.main;
 
+import com.sv.fincore.controller.ClienteController;
+import com.sv.fincore.controller.CuentaController;
+import com.sv.fincore.controller.TransaccionController;
 import com.sv.fincore.model.Cliente;
 import com.sv.fincore.model.Cuenta;
 import com.sv.fincore.model.Transaccion;
@@ -16,8 +19,12 @@ public class Main {
 
         Scanner sc = new Scanner(System.in);
 
-        ClienteService clienteService = new ClienteService();
-        CuentaService cuentaService = new CuentaService(clienteService);
+ClienteService clienteService = new ClienteService();
+CuentaService cuentaService = new CuentaService(clienteService);
+
+ClienteController clienteController = new ClienteController(clienteService);
+CuentaController cuentaController = new CuentaController(cuentaService);
+TransaccionController transaccionController = new TransaccionController(cuentaService);
 
         int opcion;
 
@@ -86,14 +93,14 @@ public class Main {
                     );
 
                     System.out.println(
-                            clienteService.registrarCliente(cliente)
+                           clienteController.registrarCliente(cliente)
                     );
 
                     break;
 
                 case 2:
 
-                    for (Cliente c : clienteService.listarClientes()) {
+                    for (Cliente c : clienteController.listarClientes()) {
 
                         System.out.println("DUI: " + c.getDui());
                         System.out.println("Nombre: " + c.getNombre());
@@ -114,7 +121,7 @@ public class Main {
                     String tipoCuenta = sc.nextLine();
 
                     System.out.println(
-                            cuentaService.crearCuenta(
+                            cuentaController.crearCuenta(
                                     numeroCuenta,
                                     duiCliente,
                                     tipoCuenta
@@ -125,7 +132,7 @@ public class Main {
 
                 case 4:
 
-                    for (Cuenta cuenta : cuentaService.listarCuentas()) {
+                    for (Cuenta cuenta : cuentaController.listarCuentas()) {
 
                         System.out.println("Cuenta: " + cuenta.getNumeroCuenta());
                         System.out.println("DUI Cliente: " + cuenta.getDuiCliente());
@@ -145,7 +152,7 @@ public class Main {
                     sc.nextLine();
 
                     System.out.println(
-                            cuentaService.depositar(
+                            transaccionController.depositar(
                                     cuentaDeposito,
                                     montoDeposito
                             )
@@ -163,7 +170,7 @@ public class Main {
                     sc.nextLine();
 
                     System.out.println(
-                            cuentaService.retirar(
+                            transaccionController.retirar(
                                     cuentaRetiro,
                                     montoRetiro
                             )
@@ -184,7 +191,7 @@ public class Main {
                     sc.nextLine();
 
                     System.out.println(
-                            cuentaService.transferir(
+                            transaccionController.transferir(
                                     origen,
                                     destino,
                                     montoTransferencia
@@ -199,7 +206,7 @@ public class Main {
                     String duiBuscar = sc.nextLine();
 
                     Cliente encontrado =
-                            clienteService.buscarPorDui(duiBuscar);
+                            clienteController.buscarPorDui(duiBuscar);
 
                     if (encontrado != null) {
 
@@ -221,7 +228,7 @@ public class Main {
                     String cuentaHistorial = sc.nextLine();
 
                     for (Transaccion t :
-                            cuentaService.obtenerHistorial(cuentaHistorial)) {
+                            cuentaController.obtenerHistorial(cuentaHistorial)) {
 
                         System.out.println("Tipo: " + t.getTipo());
                         System.out.println("Monto: " + t.getMonto());
