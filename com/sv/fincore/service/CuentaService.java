@@ -1,6 +1,8 @@
 package com.sv.fincore.service;
 
+import com.sv.fincore.dao.CuentaDAO;
 import com.sv.fincore.model.Cliente;
+import java.io.IOException;
 import com.sv.fincore.model.Cuenta;
 import com.sv.fincore.model.Transaccion;
 
@@ -10,13 +12,20 @@ import java.util.List;
 import java.util.UUID;
 
 public class CuentaService {
-
+    
+    private final CuentaDAO cuentaDAO;
     private List<Cuenta> listaCuentas = new ArrayList<>();
     private ClienteService clienteService;
 
-    public CuentaService(ClienteService clienteService) {
-        this.clienteService = clienteService;
+public CuentaService(ClienteService clienteService) {
+    this.clienteService = clienteService;
+    try {
+        this.cuentaDAO = new CuentaDAO();
+        this.listaCuentas = cuentaDAO.listar();
+    } catch (IOException | ClassNotFoundException e) {
+        throw new IllegalStateException("No se pudieron cargar las cuentas", e);
     }
+}
 
     public String crearCuenta(String numeroCuenta, String duiCliente, String tipoCuenta) {
 
@@ -32,7 +41,12 @@ public class CuentaService {
 
         Cuenta cuenta = new Cuenta(numeroCuenta, duiCliente, tipoCuenta);
 
-        listaCuentas.add(cuenta);
+        try {
+    cuentaDAO.guardar(cuenta);
+    listaCuentas.add(cuenta);
+} catch (IOException e) {
+    return "No se pudo guardar la cuenta";
+}
         cliente.agregarCuenta(numeroCuenta);
 
         return "Cuenta creada exitosamente";
