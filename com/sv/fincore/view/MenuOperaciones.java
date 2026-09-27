@@ -1,5 +1,6 @@
 package com.sv.fincore.view;
 
+import com.sv.fincore.validaciones.ConsolaBanco;
 import com.sv.fincore.service.CuentaService;
 
 import java.math.BigDecimal;
@@ -42,8 +43,7 @@ public class MenuOperaciones {
 
     private void depositar() {
 
-        System.out.print("Numero de cuenta: ");
-        String numeroCuenta = sc.nextLine();
+        String numeroCuenta = ConsolaBanco.textoObligatorio(sc, "Numero de cuenta: ");
 
         BigDecimal monto = leerMonto();
 
@@ -52,8 +52,7 @@ public class MenuOperaciones {
 
     private void retirar() {
 
-        System.out.print("Numero de cuenta: ");
-        String numeroCuenta = sc.nextLine();
+        String numeroCuenta = ConsolaBanco.textoObligatorio(sc, "Numero de cuenta: ");
 
         BigDecimal monto = leerMonto();
 
@@ -62,28 +61,18 @@ public class MenuOperaciones {
 
     private void transferir() {
 
-        System.out.print("Cuenta origen: ");
-        String origen = sc.nextLine();
+        String origen = ConsolaBanco.textoObligatorio(sc, "Cuenta origen: ");
 
-        System.out.print("Cuenta destino: ");
-        String destino = sc.nextLine();
+        String destino = ConsolaBanco.textoObligatorio(sc, "Cuenta destino: ");
 
         BigDecimal monto = leerMonto();
 
         System.out.println(cuentaService.transferir(origen, destino, monto));
     }
-
-    private BigDecimal leerMonto() {
-
-        while (true) {
-            try {
-                System.out.print("Monto: ");
-                return new BigDecimal(sc.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.println("Monto invalido, intente de nuevo");
-            }
-        }
-    }
+    
+private BigDecimal leerMonto() {
+    return ConsolaBanco.montoPositivo(sc);
+}
 
     private int leerOpcion() {
         try {

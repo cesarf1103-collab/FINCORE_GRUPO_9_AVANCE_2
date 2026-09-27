@@ -1,6 +1,7 @@
 
 package com.sv.fincore.view;
 
+import com.sv.fincore.validaciones.ConsolaBanco;
 import com.sv.fincore.model.Cliente;
 import com.sv.fincore.controller.ClienteController;
 
@@ -48,26 +49,13 @@ public class MenuClientes {
 
     private void registrarCliente() {
 
-        System.out.print("ID: ");
-        String id = sc.nextLine();
-
-        System.out.print("DUI: ");
-        String dui = sc.nextLine();
-
-        System.out.print("Nombre: ");
-        String nombre = sc.nextLine();
-
-        System.out.print("Apellidos: ");
-        String apellidos = sc.nextLine();
-
-        System.out.print("Correo: ");
-        String correo = sc.nextLine();
-
-        System.out.print("Telefono: ");
-        String telefono = sc.nextLine();
-
-        System.out.print("Direccion: ");
-        String direccion = sc.nextLine();
+    String id = ConsolaBanco.textoObligatorio(sc, "ID: ");
+    String dui = ConsolaBanco.dui(sc, "DUI: ");
+    String nombre = ConsolaBanco.textoObligatorio(sc, "Nombre: ");
+    String apellidos = ConsolaBanco.textoObligatorio(sc, "Apellidos: ");
+    String correo = ConsolaBanco.textoObligatorio(sc, "Correo: ");
+    String telefono = ConsolaBanco.textoObligatorio(sc, "Telefono: ");
+    String direccion = ConsolaBanco.textoObligatorio(sc, "Direccion: ");
 
         LocalDate fechaNacimiento = leerFecha();
 
@@ -96,8 +84,7 @@ public class MenuClientes {
 
     private void buscarCliente() {
 
-        System.out.print("Ingrese DUI: ");
-        String dui = sc.nextLine();
+    String dui = ConsolaBanco.dui(sc, "Ingrese DUI: ");
 
         Cliente cliente = clienteController.buscarPorDui(dui);
 
@@ -116,23 +103,17 @@ public class MenuClientes {
 
     private void modificarCliente() {
 
-        System.out.print("DUI del cliente a modificar: ");
-        String dui = sc.nextLine();
+        String dui = ConsolaBanco.dui(sc, "DUI del cliente a modificar: ");
 
-        System.out.print("Nuevo nombre: ");
-        String nombre = sc.nextLine();
+        String nombre = ConsolaBanco.textoObligatorio(sc, "Nuevo nombre: ");
 
-        System.out.print("Nuevos apellidos: ");
-        String apellidos = sc.nextLine();
+        String apellidos = ConsolaBanco.textoObligatorio(sc, "Nuevos apellidos: ");
+        
+        String correo = ConsolaBanco.textoObligatorio(sc, "Nuevo correo: ");
 
-        System.out.print("Nuevo correo: ");
-        String correo = sc.nextLine();
+        String telefono = ConsolaBanco.textoObligatorio(sc, "Nuevo telefono: ");
 
-        System.out.print("Nuevo telefono: ");
-        String telefono = sc.nextLine();
-
-        System.out.print("Nueva direccion: ");
-        String direccion = sc.nextLine();
+        String direccion = ConsolaBanco.textoObligatorio(sc, "Nueva direccion: ");
 
         System.out.println(
                 clienteController.modificarCliente(dui, nombre, apellidos, correo, telefono, direccion)
@@ -141,8 +122,7 @@ public class MenuClientes {
 
     private void eliminarCliente() {
 
-        System.out.print("DUI del cliente a eliminar: ");
-        String dui = sc.nextLine();
+        String dui = ConsolaBanco.dui(sc, "DUI del cliente a eliminar: ");
 
         System.out.println(clienteController.eliminarCliente(dui));
     }

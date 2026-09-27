@@ -1,5 +1,6 @@
 package com.sv.fincore.view;
 
+import com.sv.fincore.validaciones.ConsolaBanco;
 import com.sv.fincore.model.Cuenta;
 import com.sv.fincore.model.Transaccion;
 import com.sv.fincore.service.CuentaService;
@@ -46,14 +47,11 @@ public class MenuCuentas {
 
     private void crearCuenta() {
 
-        System.out.print("Numero de cuenta: ");
-        String numeroCuenta = sc.nextLine();
+        String numeroCuenta = ConsolaBanco.textoObligatorio(sc, "Numero de cuenta: ");
 
-        System.out.print("DUI del cliente: ");
-        String duiCliente = sc.nextLine();
+        String duiCliente = ConsolaBanco.dui(sc, "DUI del cliente: ");
 
-        System.out.print("Tipo de cuenta: ");
-        String tipoCuenta = sc.nextLine();
+        String tipoCuenta = ConsolaBanco.textoObligatorio(sc, "Tipo de cuenta: ");
 
         System.out.println(cuentaService.crearCuenta(numeroCuenta, duiCliente, tipoCuenta));
     }
@@ -77,8 +75,7 @@ public class MenuCuentas {
 
     private void verHistorial() {
 
-        System.out.print("Numero de cuenta: ");
-        String numeroCuenta = sc.nextLine();
+        String numeroCuenta = ConsolaBanco.textoObligatorio(sc, "Numero de cuenta: ");
 
         List<Transaccion> historial = cuentaService.obtenerHistorial(numeroCuenta);
 
@@ -98,8 +95,7 @@ public class MenuCuentas {
 
     private void desactivarCuenta() {
 
-        System.out.print("Numero de cuenta a desactivar: ");
-        String numeroCuenta = sc.nextLine();
+        String numeroCuenta = ConsolaBanco.textoObligatorio(sc, "Numero de cuenta a desactivar: ");
 
         System.out.println(cuentaService.desactivarCuenta(numeroCuenta));
     }
