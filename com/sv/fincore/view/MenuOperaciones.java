@@ -1,7 +1,7 @@
 package com.sv.fincore.view;
 
-import com.sv.fincore.validaciones.ConsolaBanco;
 import com.sv.fincore.service.CuentaService;
+import com.sv.fincore.validaciones.ConsolaBanco;
 
 import java.math.BigDecimal;
 import java.util.Scanner;
@@ -17,7 +17,6 @@ public class MenuOperaciones {
     }
 
     public void mostrar() {
-
         int opcion;
 
         do {
@@ -25,7 +24,8 @@ public class MenuOperaciones {
             System.out.println("1. Depositar");
             System.out.println("2. Retirar");
             System.out.println("3. Transferir");
-            System.out.println("4. Volver al menu principal");
+            System.out.println("4. Generar reporte bancario");
+            System.out.println("5. Volver al menu principal");
             System.out.print("Seleccione una opcion: ");
 
             opcion = leerOpcion();
@@ -34,45 +34,39 @@ public class MenuOperaciones {
                 case 1 -> depositar();
                 case 2 -> retirar();
                 case 3 -> transferir();
-                case 4 -> System.out.println("Volviendo al menu principal...");
+                case 4 -> System.out.println(
+                        cuentaService.generarReporteEnSegundoPlano());
+                case 5 -> System.out.println("Volviendo al menu principal...");
                 default -> System.out.println("Opcion invalida");
             }
-
-        } while (opcion != 4);
+        } while (opcion != 5);
     }
 
     private void depositar() {
-
-        String numeroCuenta = ConsolaBanco.textoObligatorio(sc, "Numero de cuenta: ");
-
-        BigDecimal monto = leerMonto();
+        String numeroCuenta =
+                ConsolaBanco.textoObligatorio(sc, "Numero de cuenta: ");
+        BigDecimal monto = ConsolaBanco.montoPositivo(sc);
 
         System.out.println(cuentaService.depositar(numeroCuenta, monto));
     }
 
     private void retirar() {
-
-        String numeroCuenta = ConsolaBanco.textoObligatorio(sc, "Numero de cuenta: ");
-
-        BigDecimal monto = leerMonto();
+        String numeroCuenta =
+                ConsolaBanco.textoObligatorio(sc, "Numero de cuenta: ");
+        BigDecimal monto = ConsolaBanco.montoPositivo(sc);
 
         System.out.println(cuentaService.retirar(numeroCuenta, monto));
     }
 
     private void transferir() {
-
-        String origen = ConsolaBanco.textoObligatorio(sc, "Cuenta origen: ");
-
-        String destino = ConsolaBanco.textoObligatorio(sc, "Cuenta destino: ");
-
-        BigDecimal monto = leerMonto();
+        String origen =
+                ConsolaBanco.textoObligatorio(sc, "Cuenta origen: ");
+        String destino =
+                ConsolaBanco.textoObligatorio(sc, "Cuenta destino: ");
+        BigDecimal monto = ConsolaBanco.montoPositivo(sc);
 
         System.out.println(cuentaService.transferir(origen, destino, monto));
     }
-    
-private BigDecimal leerMonto() {
-    return ConsolaBanco.montoPositivo(sc);
-}
 
     private int leerOpcion() {
         try {
