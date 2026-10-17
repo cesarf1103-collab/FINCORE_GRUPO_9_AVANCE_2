@@ -233,4 +233,33 @@ public class CuentaService {
         hilo.start();
         return "Generando reporte en segundo plano: " + ruta;
     }
+    public synchronized void calcularIntereses() {
+        System.out.println("Calculando intereses para todas las cuentas activas...");
+
+        for (Cuenta cuenta : listaCuentas) {
+            if (cuenta.isActiva()) {
+                BigDecimal interes = cuenta.getSaldo().multiply(new BigDecimal("0.02")); // 2% de interés
+                cuenta.setSaldo(cuenta.getSaldo().add(interes));
+
+                Transaccion transaccion = new Deposito(
+                        UUID.randomUUID().toString(),
+                        cuenta.getNumeroCuenta(),
+                        interes,
+                        "Interés generado automáticamente"
+                );
+
+                cuenta.agregarTransaccion(transaccion);
+
+                try {
+                    cuentaDAO.guardar(cuenta);
+                    System.out.println("Interés aplicado a la cuenta " + cuenta.getNumeroCuenta());
+                } catch (IOException e) {
+                    System.out.println("Error al guardar la cuenta " + cuenta.getNumeroCuenta());
+                }
+            }
+        }
+
+        System.out.println("Cálculo de intereses completado.");
+    }
+
 }
