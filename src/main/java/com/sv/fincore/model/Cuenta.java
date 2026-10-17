@@ -37,6 +37,12 @@ public class Cuenta {
     public void setActiva(boolean activa) { this.activa = activa; }
 
     public void agregarTransaccion(Transaccion transaccion) {
-        this.historial.add(transaccion);
+    if (transaccion == null) {
+        throw new IllegalArgumentException(
+            "La transaccion no puede ser nula"
+        );
+    }
+
+    this.historial.add(transaccion);
     }
 }

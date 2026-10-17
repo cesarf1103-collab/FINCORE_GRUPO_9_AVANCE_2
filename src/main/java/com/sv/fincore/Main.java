@@ -1,7 +1,7 @@
-package com.sv.fincore.main;
+package com.sv.fincore;
 
-import com.sv.fincore.model.Cliente;
 import com.sv.fincore.model.Cuenta;
+import com.sv.fincore.model.Cliente;
 import com.sv.fincore.model.Transaccion;
 import com.sv.fincore.service.ClienteService;
 import com.sv.fincore.service.CuentaService;
