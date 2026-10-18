@@ -1,3 +1,4 @@
+
 package com.sv.fincore.util;
 
 import java.sql.Connection;
@@ -5,11 +6,32 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConexionDB {
-    private static final String URL = "jdbc:mysql://localhost:3306/fincore_db";
-    private static final String USER = "root";
-    private static final String PASSWORD = "admin123456";
 
-    public static Connection obtenerConexion() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+    private static String obtenerVariable(String nombre)
+            throws SQLException {
+
+        String valor = System.getenv(nombre);
+
+        if (valor == null || valor.isBlank()) {
+            throw new SQLException(
+                "Falta configurar la variable de entorno: " + nombre
+            );
+        }
+
+        return valor;
+    }
+
+    public static Connection obtenerConexion()
+            throws SQLException {
+
+        String url = obtenerVariable("FINCORE_DB_URL");
+        String usuario = obtenerVariable("FINCORE_DB_USER");
+        String password = obtenerVariable("FINCORE_DB_PASSWORD");
+
+        return DriverManager.getConnection(
+            url,
+            usuario,
+            password
+        );
     }
 }
