@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class Transaccion implements Serializable {
+public abstract class Transaccion implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String idTransaccion;
@@ -17,8 +17,12 @@ public class Transaccion implements Serializable {
     private String cuentaOrigen;
     private String cuentaDestino;
 
-    public Transaccion(String idTransaccion, String numeroCuenta, String tipo,
-                       BigDecimal monto, BigDecimal saldoPosterior, String descripcion) {
+    protected Transaccion(String idTransaccion, String numeroCuenta, String tipo,
+                          BigDecimal monto, BigDecimal saldoPosterior, String descripcion) {
+        if (monto == null || monto.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Monto invalido");
+        }
+
         this.idTransaccion = idTransaccion;
         this.numeroCuenta = numeroCuenta;
         this.tipo = tipo;
@@ -28,12 +32,32 @@ public class Transaccion implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Transaccion(String idTransaccion, String numeroCuenta, String tipo,
-                       BigDecimal monto, BigDecimal saldoPosterior, String descripcion,
-                       String cuentaOrigen, String cuentaDestino) {
+    protected Transaccion(String idTransaccion, String numeroCuenta, String tipo,
+                          BigDecimal monto, BigDecimal saldoPosterior, String descripcion,
+                          String cuentaOrigen, String cuentaDestino) {
         this(idTransaccion, numeroCuenta, tipo, monto, saldoPosterior, descripcion);
         this.cuentaOrigen = cuentaOrigen;
         this.cuentaDestino = cuentaDestino;
+    }
+
+    public abstract void ejecutar(Cuenta origen, Cuenta destino);
+
+    protected void registrarSaldoPosterior(BigDecimal saldo) {
+        this.saldoPosterior = saldo;
+    }
+
+    void restaurar(BigDecimal saldo, LocalDateTime fechaOriginal) {
+        this.saldoPosterior = saldo;
+        this.fecha = fechaOriginal;
+    }
+
+    protected static void validarCuenta(Cuenta cuenta) {
+        if (cuenta == null) {
+            throw new IllegalArgumentException("Cuenta no encontrada");
+        }
+        if (!cuenta.isActiva()) {
+            throw new IllegalStateException("Cuenta inactiva");
+        }
     }
 
     public String getIdTransaccion() { return idTransaccion; }
