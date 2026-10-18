@@ -1,52 +1,26 @@
 package com.sv.fincore.dao;
 
 import com.sv.fincore.model.Transaccion;
-import com.sv.fincore.util.ArchivoUtil;
+import com.sv.fincore.util.ConexionDB;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.sql.*;
 
 public class TransaccionDAO {
 
-    private static final String RUTA = "datos/transacciones.dat";
-
-    private List<Transaccion> transacciones;
-
-    public TransaccionDAO() throws IOException, ClassNotFoundException {
-        this.transacciones = ArchivoUtil.cargar(RUTA, new ArrayList<>());
-    }
-
-    public void guardar(Transaccion t) throws IOException {
-        transacciones.add(t);
-        persistir();
-    }
-
-    public List<Transaccion> listar() {
-        return new ArrayList<>(transacciones);
-    }
-
-    public List<Transaccion> listarPorCuenta(String numeroCuenta) {
-        return transacciones.stream()
-                .filter(t -> t.getNumeroCuenta().equals(numeroCuenta))
-                .collect(Collectors.toList());
-    }
-
-    public Transaccion buscarPorId(String idTransaccion) {
-        return transacciones.stream()
-                .filter(t -> t.getIdTransaccion().equals(idTransaccion))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public Map<String, Long> resumenPorTipo() {
-        return transacciones.stream()
-                .collect(Collectors.groupingBy(
-                        Transaccion::getTipo,
-                        Collectors.counting()));
-    }
-
-    private void persistir() throws IOException {
-        ArchivoUtil.guardar(RUTA, transacciones);
+    public void guardar(Transaccion t) throws SQLException {
+        String sql = "INSERT INTO transacciones (id_transaccion, numero_cuenta, tipo, monto, saldo_posterior, descripcion) VALUES (?, ?, ?, ?, ?, ?)";
+        
+        try (Connection conn = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, t.getIdTransaccion());
+            stmt.setString(2, t.getNumeroCuenta());
+            stmt.setString(3, t.getTipo());
+            stmt.setBigDecimal(4, t.getMonto());
+            stmt.setBigDecimal(5, t.getSaldoPosterior());
+            stmt.setString(6, t.getDescripcion());
+            
+            stmt.executeUpdate();
+        }
     }
 }
