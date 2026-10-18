@@ -1,59 +1,40 @@
 package com.sv.fincore.dao;
 
 import com.sv.fincore.model.Cuenta;
-import com.sv.fincore.util.ArchivoUtil;
+import com.sv.fincore.util.ConexionDB;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.sql.*;
 
 public class CuentaDAO {
 
-    private static final String RUTA = "datos/cuentas.dat";
-
-    private Map<String, Cuenta> cuentas;
-
-    public CuentaDAO() throws IOException, ClassNotFoundException {
-        this.cuentas = ArchivoUtil.cargar(RUTA, new HashMap<>());
-    }
-
-    public void guardar(Cuenta c) throws IOException {
-        cuentas.put(c.getNumeroCuenta(), c);
-        persistir();
-    }
-
-    public Cuenta buscarPorNumero(String numeroCuenta) {
-        return cuentas.get(numeroCuenta);
-    }
-
-    public List<Cuenta> listar() {
-        return new ArrayList<>(cuentas.values());
-    }
-
-    public List<Cuenta> listarPorDui(String duiCliente) {
-        return cuentas.values().stream()
-                .filter(c -> c.getDuiCliente().equals(duiCliente))
-                .collect(Collectors.toList());
-    }
-
-    public boolean actualizarSaldo(String numeroCuenta, BigDecimal nuevoSaldo) throws IOException {
-        Cuenta c = cuentas.get(numeroCuenta);
-        if (c == null) return false;
-        c.setSaldo(nuevoSaldo);
-        persistir();
-        return true;
-    }
-
-    public boolean eliminar(String numeroCuenta) throws IOException {
-        if (cuentas.remove(numeroCuenta) != null) {
-            persistir();
-            return true;
+    public void guardar(Cuenta c) throws SQLException {
+        String sql = "INSERT INTO cuentas (numero_cuenta, dui_cliente, saldo, tipo_cuenta, activa) VALUES (?, ?, ?, ?, ?)";
+        
+        try (Connection conn = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, c.getNumeroCuenta());
+            stmt.setString(2, c.getDuiCliente());
+            stmt.setBigDecimal(3, c.getSaldo());
+            stmt.setString(4, c.getTipoCuenta());
+            stmt.setBoolean(5, c.isActiva());
+            
+            stmt.executeUpdate();
         }
-        return false;
     }
 
-    private void persistir() throws IOException {
-        ArchivoUtil.guardar(RUTA, cuentas);
+    public boolean actualizarSaldo(String numeroCuenta, BigDecimal nuevoSaldo) throws SQLException {
+        String sql = "UPDATE cuentas SET saldo = ? WHERE numero_cuenta = ?";
+        
+        try (Connection conn = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setBigDecimal(1, nuevoSaldo);
+            stmt.setString(2, numeroCuenta);
+            
+            int filasAfectadas = stmt.executeUpdate();
+            return filasAfectadas > 0;
+        }
     }
 }
