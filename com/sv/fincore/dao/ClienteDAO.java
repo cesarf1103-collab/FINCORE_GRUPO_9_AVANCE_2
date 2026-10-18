@@ -1,54 +1,54 @@
 package com.sv.fincore.dao;
 
 import com.sv.fincore.model.Cliente;
-import com.sv.fincore.util.ArchivoUtil;
+import com.sv.fincore.util.ConexionDB;
 
-import java.io.IOException;
-import java.util.*;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClienteDAO {
 
-    private static final String RUTA = "datos/clientes.dat";
-
-    private Map<String, Cliente> clientes;
-
-    public ClienteDAO() throws IOException, ClassNotFoundException {
-        this.clientes = ArchivoUtil.cargar(RUTA, new HashMap<>());
-    }
-
-    public void guardar(Cliente c) throws IOException {
-        clientes.put(c.getId(), c);
-        persistir();
-    }
-
-    public Cliente buscarPorId(String id) {
-        return clientes.get(id);
-    }
-
-    public Cliente buscarPorDui(String dui) {
-        return clientes.values().stream()
-                .filter(c -> c.getDui().equals(dui))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public List<Cliente> listar() {
-        return new ArrayList<>(clientes.values());
-    }
-
-    public boolean eliminar(String id) throws IOException {
-        if (clientes.remove(id) != null) {
-            persistir();
-            return true;
+    public void guardar(Cliente c) throws SQLException {
+        String sql = "INSERT INTO clientes (id, dui, nombre, apellidos, correo, telefono, direccion) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
+        try (Connection conn = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, c.getId());
+            stmt.setString(2, c.getDui());
+            stmt.setString(3, c.getNombre());
+            stmt.setString(4, c.getApellidos());
+            stmt.setString(5, c.getCorreo());
+            stmt.setString(6, c.getTelefono());
+            stmt.setString(7, c.getDireccion());
+            
+            stmt.executeUpdate();
         }
-        return false;
     }
 
-    public boolean existe(String id) {
-        return clientes.containsKey(id);
-    }
+    public List<Cliente> listar() throws SQLException {
+        List<Cliente> lista = new ArrayList<>();
+        String sql = "SELECT * FROM clientes";
 
-    private void persistir() throws IOException {
-        ArchivoUtil.guardar(RUTA, clientes);
+        try (Connection conn = ConexionDB.obtenerConexion();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Cliente c = new Cliente(
+                    rs.getString("id"),
+                    rs.getString("dui"),
+                    rs.getString("nombre"),
+                    rs.getString("apellidos"),
+                    rs.getString("correo"),
+                    rs.getString("telefono"),
+                    rs.getString("direccion"),
+                    rs.getDate("fecha_nacimiento") != null ? rs.getDate("fecha_nacimiento").toLocalDate() : null
+                );
+                lista.add(c);
+            }
+        }
+        return lista;
     }
 }
