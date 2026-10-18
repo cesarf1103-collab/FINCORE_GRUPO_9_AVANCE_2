@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CuentaDAO {
+public class CuentaDAO implements CrudRepository<Cuenta, String> {
 
     private static final String RUTA = "datos/cuentas.dat";
 
@@ -55,30 +55,37 @@ public class CuentaDAO {
             throws IOException, ClassNotFoundException {
         try (ObjectInputStream entrada =
                      new ObjectInputStream(new FileInputStream(RUTA)) {
-            @Override
-            protected ObjectStreamClass readClassDescriptor()
-                    throws IOException, ClassNotFoundException {
-                ObjectStreamClass descriptor = super.readClassDescriptor();
+                         @Override
+                         protected ObjectStreamClass readClassDescriptor()
+                                 throws IOException, ClassNotFoundException {
+                             ObjectStreamClass descriptor = super.readClassDescriptor();
 
-                if (descriptor.getName().equals("com.sv.fincore.model.Transaccion")) {
-                    return ObjectStreamClass.lookup(TransaccionAnterior.class);
-                }
-                return descriptor;
-            }
-        }) {
+                             if (descriptor.getName().equals("com.sv.fincore.model.Transaccion")) {
+                                 return ObjectStreamClass.lookup(TransaccionAnterior.class);
+                             }
+                             return descriptor;
+                         }
+                     }) {
             return (Map<String, Cuenta>) entrada.readObject();
         }
     }
 
+    @Override
     public void guardar(Cuenta c) throws IOException {
         cuentas.put(c.getNumeroCuenta(), c);
         persistir();
+    }
+
+    @Override
+    public Cuenta buscarPorId(String id) {
+        return buscarPorNumero(id);
     }
 
     public Cuenta buscarPorNumero(String numeroCuenta) {
         return cuentas.get(numeroCuenta);
     }
 
+    @Override
     public List<Cuenta> listar() {
         return new ArrayList<>(cuentas.values());
     }
@@ -99,6 +106,7 @@ public class CuentaDAO {
         return true;
     }
 
+    @Override
     public boolean eliminar(String numeroCuenta) throws IOException {
         if (cuentas.remove(numeroCuenta) != null) {
             persistir();

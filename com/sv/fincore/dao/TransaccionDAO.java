@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TransaccionDAO {
+public class TransaccionDAO implements CrudRepository<Transaccion, String> {
 
     private static final String RUTA = "datos/transacciones.dat";
 
@@ -17,11 +17,13 @@ public class TransaccionDAO {
         this.transacciones = ArchivoUtil.cargar(RUTA, new ArrayList<>());
     }
 
+    @Override
     public void guardar(Transaccion t) throws IOException {
         transacciones.add(t);
         persistir();
     }
 
+    @Override
     public List<Transaccion> listar() {
         return new ArrayList<>(transacciones);
     }
@@ -32,6 +34,7 @@ public class TransaccionDAO {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public Transaccion buscarPorId(String idTransaccion) {
         return transacciones.stream()
                 .filter(t -> t.getIdTransaccion().equals(idTransaccion))
@@ -44,6 +47,19 @@ public class TransaccionDAO {
                 .collect(Collectors.groupingBy(
                         Transaccion::getTipo,
                         Collectors.counting()));
+    }
+
+    @Override
+    public boolean eliminar(String id) throws IOException {
+        Transaccion transaccion = buscarPorId(id);
+
+        if (transaccion != null) {
+            transacciones.remove(transaccion);
+            persistir();
+            return true;
+        }
+
+        return false;
     }
 
     private void persistir() throws IOException {
