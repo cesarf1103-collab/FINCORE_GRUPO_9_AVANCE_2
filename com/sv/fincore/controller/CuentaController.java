@@ -32,4 +32,8 @@ public class CuentaController {
     public String desactivarCuenta(String numeroCuenta) {
         return cuentaService.desactivarCuenta(numeroCuenta);
     }
+
+    public String generarReporteEnSegundoPlano() {
+        return cuentaService.generarReporteEnSegundoPlano();
+    }
 }

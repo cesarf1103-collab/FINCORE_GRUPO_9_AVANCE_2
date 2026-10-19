@@ -38,17 +38,15 @@ public final class ConsolaBanco {
             System.out.print("Monto: ");
             String valor = sc.nextLine().trim();
 
-            try {
+            if (valor.matches("\\d+(\\.\\d{1,2})?")) {
                 BigDecimal monto = new BigDecimal(valor);
 
                 if (monto.compareTo(BigDecimal.ZERO) > 0) {
                     return monto;
                 }
-            } catch (NumberFormatException e) {
-                // La entrada no es un número.
             }
 
-            System.out.println("Monto inválido. Ingrese un número mayor que cero.");
+            System.out.println("Monto inválido. Ingrese un valor mayor a $0.00 (máximo 2 decimales).");
         }
     }
 }
