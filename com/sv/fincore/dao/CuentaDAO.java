@@ -55,17 +55,17 @@ public class CuentaDAO {
             throws IOException, ClassNotFoundException {
         try (ObjectInputStream entrada =
                      new ObjectInputStream(new FileInputStream(RUTA)) {
-            @Override
-            protected ObjectStreamClass readClassDescriptor()
-                    throws IOException, ClassNotFoundException {
-                ObjectStreamClass descriptor = super.readClassDescriptor();
+                         @Override
+                         protected ObjectStreamClass readClassDescriptor()
+                                 throws IOException, ClassNotFoundException {
+                             ObjectStreamClass descriptor = super.readClassDescriptor();
 
-                if (descriptor.getName().equals("com.sv.fincore.model.Transaccion")) {
-                    return ObjectStreamClass.lookup(TransaccionAnterior.class);
-                }
-                return descriptor;
-            }
-        }) {
+                             if (descriptor.getName().equals("com.sv.fincore.model.Transaccion")) {
+                                 return ObjectStreamClass.lookup(TransaccionAnterior.class);
+                             }
+                             return descriptor;
+                         }
+                     }) {
             return (Map<String, Cuenta>) entrada.readObject();
         }
     }
