@@ -3,7 +3,7 @@ package com.sv.fincore.view;
 import com.sv.fincore.validaciones.ConsolaBanco;
 import com.sv.fincore.model.Cuenta;
 import com.sv.fincore.model.Transaccion;
-import com.sv.fincore.service.CuentaService;
+import com.sv.fincore.controller.CuentaController;
 
 import java.util.List;
 import java.util.Scanner;
@@ -11,11 +11,11 @@ import java.util.Scanner;
 public class MenuCuentas {
 
     private final Scanner sc;
-    private final CuentaService cuentaService;
+    private final CuentaController cuentaController;
 
-    public MenuCuentas(Scanner sc, CuentaService cuentaService) {
+    public MenuCuentas(Scanner sc, CuentaController cuentaController) {
         this.sc = sc;
-        this.cuentaService = cuentaService;
+        this.cuentaController = cuentaController;
     }
 
     public void mostrar() {
@@ -53,17 +53,17 @@ public class MenuCuentas {
 
         String tipoCuenta = ConsolaBanco.textoObligatorio(sc, "Tipo de cuenta: ");
 
-        System.out.println(cuentaService.crearCuenta(numeroCuenta, duiCliente, tipoCuenta));
+        System.out.println(cuentaController.crearCuenta(numeroCuenta, duiCliente, tipoCuenta));
     }
 
     private void listarCuentas() {
 
-        if (cuentaService.listarCuentas().isEmpty()) {
+        if (cuentaController.listarCuentas().isEmpty()) {
             System.out.println("No hay cuentas registradas");
             return;
         }
 
-        for (Cuenta cuenta : cuentaService.listarCuentas()) {
+        for (Cuenta cuenta : cuentaController.listarCuentas()) {
             System.out.println("-------------------------");
             System.out.println("Cuenta: " + cuenta.getNumeroCuenta());
             System.out.println("DUI Cliente: " + cuenta.getDuiCliente());
@@ -77,7 +77,7 @@ public class MenuCuentas {
 
         String numeroCuenta = ConsolaBanco.textoObligatorio(sc, "Numero de cuenta: ");
 
-        List<Transaccion> historial = cuentaService.obtenerHistorial(numeroCuenta);
+        List<Transaccion> historial = cuentaController.obtenerHistorial(numeroCuenta);
 
         if (historial.isEmpty()) {
             System.out.println("No hay transacciones para esta cuenta");
@@ -97,7 +97,7 @@ public class MenuCuentas {
 
         String numeroCuenta = ConsolaBanco.textoObligatorio(sc, "Numero de cuenta a desactivar: ");
 
-        System.out.println(cuentaService.desactivarCuenta(numeroCuenta));
+        System.out.println(cuentaController.desactivarCuenta(numeroCuenta));
     }
 
     private int leerOpcion() {
