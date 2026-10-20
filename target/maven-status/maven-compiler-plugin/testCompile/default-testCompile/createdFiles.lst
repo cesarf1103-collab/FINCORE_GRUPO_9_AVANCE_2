@@ -1,0 +1,14 @@
+com\sv\fincore\controller\CuentaControllerTest.class
+com\sv\fincore\util\ArchivoUtilTest.class
+com\sv\fincore\view\MenuClientesTest.class
+com\sv\fincore\validaciones\ConsolaBancoTest.class
+com\sv\fincore\dao\ClienteDAOTest.class
+com\sv\fincore\model\TransaccionesTest.class
+com\sv\fincore\view\MenuOperacionesTest.class
+com\sv\fincore\model\TransaccionAnteriorTest.class
+com\sv\fincore\service\ClienteServiceTest.class
+com\sv\fincore\controller\TransaccionControllerTest.class
+com\sv\fincore\controller\ClienteControllerTest.class
+com\sv\fincore\service\CuentaServiceTest.class
+com\sv\fincore\model\ClienteYCuentaTest.class
+com\sv\fincore\ui\ConsultaHistorialTest.class

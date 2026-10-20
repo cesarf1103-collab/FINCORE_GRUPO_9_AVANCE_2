@@ -206,7 +206,7 @@ Según `docs/PruebasTecnicasPOO.md`, el equipo aplicó tres tipos de análisis e
 |---|---|---|---|
 | 1 | Duplicidad de modelos: `Administrador`, `Cajero`, `AtencionCliente` y `Usuario` existen tanto en `com.sv.fincore.model` (sin herencia) como en `modulo.empleado`/`modulo.persona` (con herencia de `Persona`) | Alto — confusión sobre cuál clase es la "oficial"; la herencia documentada no se refleja en el modelo realmente usado por los servicios | Unificar ambas jerarquías bajo `com.sv.fincore.model`, haciendo que `Cliente` y los roles de empleado hereden de una única clase `Persona` |
 | 2 | Clases sueltas `Cliente.java` y `Usuario.java` en la **raíz del repositorio**, sin paquete, con estructura distinta a las versiones oficiales | Medio — código muerto/confuso que puede compilarse por error junto con el resto | Eliminar o mover a una carpeta de ejercicios anteriores fuera del código fuente activo |
-| 3 | `pom.xml` ubicado dentro de `com/sv/fincore/` en lugar de la raíz del proyecto | Alto — Maven espera el `pom.xml` en la raíz para poder ejecutar `mvn clean verify`, `mvn package`, etc. | Mover `pom.xml` a la raíz del repositorio |
+| 3 | `pom.xml` ubicado dentro de `src/main/java/com` en lugar de la raíz del proyecto | Alto — Maven espera el `pom.xml` en la raíz para poder ejecutar `mvn clean verify`, `mvn package`, etc. | Mover `pom.xml` a la raíz del repositorio |
 | 4 | No existen clases de prueba (JUnit está declarado como dependencia pero no hay carpeta `src/test`) | Medio — las pruebas funcionales de la Matriz de Pruebas son manuales, no automatizadas | Crear pruebas unitarias con JUnit 5 para `ClienteService` y `CuentaService`, especialmente para los casos TC-003 y TC-004 que están en FAIL |
 | 5 | `frontend validaciones.html` es un mockup visual estático sin conexión real al backend Java | Bajo — puede generar expectativa de una interfaz funcional | Aclarar en la documentación que es solo un prototipo visual de referencia |
 | 6 | El modelo `Usuario` (autenticación) no está integrado a ningún flujo de la aplicación | Bajo/Medio | Definir si la autenticación es parte del alcance de un próximo avance |
@@ -215,7 +215,7 @@ Según `docs/PruebasTecnicasPOO.md`, el equipo aplicó tres tipos de análisis e
 
 ## 11. Manual de compilación y ejecución
 
->  Debido al hallazgo #3, antes de compilar mueve `pom.xml` desde `com/sv/fincore/pom.xml` hacia la raíz del proyecto.
+> Debido al hallazgo #3, antes de compilar mueve `pom.xml` desde `pom.xml` hacia la raíz del proyecto.
 
 **Requisitos:** JDK 17 o superior, Maven 3.8+.
 
