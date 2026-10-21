@@ -10,6 +10,7 @@ import com.sv.fincore.model.Transferencia;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -232,5 +233,34 @@ public class CuentaService {
         );
         hilo.start();
         return "Generando reporte en segundo plano: " + ruta;
+    }
+
+    /**
+     * Simulación demostrativa. No cambia saldos, historial ni persistencia.
+     * La tasa del 2% es un ejemplo, no una regla de negocio aprobada.
+     */
+    public synchronized void calcularIntereses() {
+        BigDecimal tasaDemostrativa = new BigDecimal("0.02");
+
+        System.out.println("Simulación de intereses (no se aplicarán a las cuentas):");
+
+        for (Cuenta cuenta : listaCuentas) {
+            if (cuenta.isActiva()) {
+                BigDecimal estimado = cuenta.getSaldo()
+                        .multiply(tasaDemostrativa)
+                        .setScale(2, RoundingMode.HALF_UP);
+
+                System.out.printf(
+                        "Cuenta %s | saldo actual: %s | interés hipotético: %s (no aplicado)%n",
+                        cuenta.getNumeroCuenta(),
+                        cuenta.getSaldo(),
+                        estimado
+                );
+            }
+        }
+
+        System.out.println(
+                "Simulación completada. Falta definir y autorizar fórmula y período."
+        );
     }
 }
