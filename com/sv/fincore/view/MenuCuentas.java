@@ -1,0 +1,110 @@
+package com.sv.fincore.view;
+
+import com.sv.fincore.validaciones.ConsolaBanco;
+import com.sv.fincore.model.Cuenta;
+import com.sv.fincore.model.Transaccion;
+import com.sv.fincore.controller.CuentaController;
+
+import java.util.List;
+import java.util.Scanner;
+
+public class MenuCuentas {
+
+    private final Scanner sc;
+    private final CuentaController cuentaController;
+
+    public MenuCuentas(Scanner sc, CuentaController cuentaController) {
+        this.sc = sc;
+        this.cuentaController = cuentaController;
+    }
+
+    public void mostrar() {
+
+        int opcion;
+
+        do {
+            System.out.println("\n----- MENU CUENTAS -----");
+            System.out.println("1. Crear cuenta");
+            System.out.println("2. Listar cuentas");
+            System.out.println("3. Ver historial de cuenta");
+            System.out.println("4. Desactivar cuenta");
+            System.out.println("5. Volver al menu principal");
+            System.out.print("Seleccione una opcion: ");
+
+            opcion = leerOpcion();
+
+            switch (opcion) {
+                case 1 -> crearCuenta();
+                case 2 -> listarCuentas();
+                case 3 -> verHistorial();
+                case 4 -> desactivarCuenta();
+                case 5 -> System.out.println("Volviendo al menu principal...");
+                default -> System.out.println("Opcion invalida");
+            }
+
+        } while (opcion != 5);
+    }
+
+    private void crearCuenta() {
+
+        String numeroCuenta = ConsolaBanco.textoObligatorio(sc, "Numero de cuenta: ");
+
+        String duiCliente = ConsolaBanco.dui(sc, "DUI del cliente: ");
+
+        String tipoCuenta = ConsolaBanco.textoObligatorio(sc, "Tipo de cuenta: ");
+
+        System.out.println(cuentaController.crearCuenta(numeroCuenta, duiCliente, tipoCuenta));
+    }
+
+    private void listarCuentas() {
+
+        if (cuentaController.listarCuentas().isEmpty()) {
+            System.out.println("No hay cuentas registradas");
+            return;
+        }
+
+        for (Cuenta cuenta : cuentaController.listarCuentas()) {
+            System.out.println("-------------------------");
+            System.out.println("Cuenta: " + cuenta.getNumeroCuenta());
+            System.out.println("DUI Cliente: " + cuenta.getDuiCliente());
+            System.out.println("Saldo: $" + cuenta.getSaldo());
+            System.out.println("Tipo: " + cuenta.getTipoCuenta());
+            System.out.println("Estado: " + (cuenta.isActiva() ? "Activa" : "Inactiva"));
+        }
+    }
+
+    private void verHistorial() {
+
+        String numeroCuenta = ConsolaBanco.textoObligatorio(sc, "Numero de cuenta: ");
+
+        List<Transaccion> historial = cuentaController.obtenerHistorial(numeroCuenta);
+
+        if (historial.isEmpty()) {
+            System.out.println("No hay transacciones para esta cuenta");
+            return;
+        }
+
+        for (Transaccion t : historial) {
+            System.out.println("-------------------------");
+            System.out.println("Tipo: " + t.getTipo());
+            System.out.println("Monto: " + t.getMonto());
+            System.out.println("Saldo posterior: " + t.getSaldoPosterior());
+            System.out.println("Fecha: " + t.getFecha());
+        }
+    }
+
+    private void desactivarCuenta() {
+
+        String numeroCuenta = ConsolaBanco.textoObligatorio(sc, "Numero de cuenta a desactivar: ");
+
+        System.out.println(cuentaController.desactivarCuenta(numeroCuenta));
+    }
+
+    private int leerOpcion() {
+        try {
+            return Integer.parseInt(sc.nextLine().trim());
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+}

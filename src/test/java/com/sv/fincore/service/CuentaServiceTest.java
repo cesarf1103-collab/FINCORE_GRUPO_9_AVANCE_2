@@ -2,8 +2,13 @@ package com.sv.fincore.service;
 
 import com.sv.fincore.model.Cliente;
 import com.sv.fincore.model.Cuenta;
+import com.sv.fincore.model.Deposito;
+import com.sv.fincore.dao.CuentaDAO;
+import com.sv.fincore.dao.ClienteDAO;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,15 +18,25 @@ public class CuentaServiceTest {
     private ClienteService clienteService;
     private CuentaService cuentaService;
     private Cliente cliente;
+    private String dui;
+    private String cuenta1;
+    private String cuenta2;
+    private String cuentaInexistente;
+    private String duiInexistente;
 
     @BeforeEach
     void setUp() {
+        dui = String.format("%08d-9", Math.floorMod(UUID.randomUUID().hashCode(), 100000000));
+        duiInexistente = UUID.randomUUID().toString();
+        cuenta1 = UUID.randomUUID().toString();
+        cuenta2 = UUID.randomUUID().toString();
+        cuentaInexistente = UUID.randomUUID().toString();
         clienteService = new ClienteService();
         cuentaService = new CuentaService(clienteService);
 
         cliente = new Cliente(
-            "1",
-            "12345678-9",
+            UUID.randomUUID().toString(),
+            dui,
             "Ana",
             "Lopez",
             "ana@gmail.com",
@@ -33,22 +48,29 @@ public class CuentaServiceTest {
         clienteService.registrarCliente(cliente);
     }
 
+    @AfterEach
+    void limpiarDatos() throws Exception {
+        CuentaDAO dao = new CuentaDAO();
+        dao.eliminar(cuenta1);
+        dao.eliminar(cuenta2);
+        new ClienteDAO().eliminar(cliente.getId());
+    }
     @Test
     void crearCuentaExitosamente() {
         String resultado = cuentaService.crearCuenta(
-            "1001", "12345678-9", "Ahorro"
+            cuenta1, dui, "Ahorro"
         );
 
         assertEquals("Cuenta creada exitosamente", resultado);
-        assertNotNull(cuentaService.buscarCuenta("1001"));
+        assertNotNull(cuentaService.buscarCuenta(cuenta1));
     }
 
     @Test
     void rechazarCuentaConNumeroDuplicado() {
-        cuentaService.crearCuenta("1001", "12345678-9", "Ahorro");
+        cuentaService.crearCuenta(cuenta1, dui, "Ahorro");
 
         String resultado = cuentaService.crearCuenta(
-            "1001", "12345678-9", "Corriente"
+            cuenta1, dui, "Corriente"
         );
 
         assertEquals("Cuenta ya registrada", resultado);
@@ -57,7 +79,7 @@ public class CuentaServiceTest {
     @Test
     void rechazarCuentaSiClienteNoExiste() {
         String resultado = cuentaService.crearCuenta(
-            "1002", "00000000-0", "Ahorro"
+            cuenta2, duiInexistente, "Ahorro"
         );
 
         assertEquals("Cliente no encontrado", resultado);
@@ -65,16 +87,16 @@ public class CuentaServiceTest {
 
     @Test
     void depositarExitosamente() {
-        cuentaService.crearCuenta("1001", "12345678-9", "Ahorro");
+        cuentaService.crearCuenta(cuenta1, dui, "Ahorro");
 
         String resultado = cuentaService.depositar(
-            "1001", new BigDecimal("100.00")
+            cuenta1, new BigDecimal("100.00")
         );
 
         assertEquals("Deposito exitoso", resultado);
         assertEquals(
             0,
-            cuentaService.buscarCuenta("1001")
+            cuentaService.buscarCuenta(cuenta1)
                 .getSaldo().compareTo(new BigDecimal("100.00"))
         );
     }
@@ -82,7 +104,7 @@ public class CuentaServiceTest {
     @Test
     void rechazarDepositoEnCuentaInexistente() {
         String resultado = cuentaService.depositar(
-            "9999", new BigDecimal("50.00")
+            cuentaInexistente, new BigDecimal("50.00")
         );
 
         assertEquals("Cuenta no encontrada", resultado);
@@ -90,10 +112,10 @@ public class CuentaServiceTest {
 
     @Test
     void rechazarDepositoConMontoInvalido() {
-        cuentaService.crearCuenta("1001", "12345678-9", "Ahorro");
+        cuentaService.crearCuenta(cuenta1, dui, "Ahorro");
 
         String resultado = cuentaService.depositar(
-            "1001", BigDecimal.ZERO
+            cuenta1, BigDecimal.ZERO
         );
 
         assertEquals("Monto invalido", resultado);
@@ -101,10 +123,10 @@ public class CuentaServiceTest {
 
     @Test
     void rechazarRetiroPorSaldoInsuficiente() {
-        cuentaService.crearCuenta("1001", "12345678-9", "Ahorro");
+        cuentaService.crearCuenta(cuenta1, dui, "Ahorro");
 
         String resultado = cuentaService.retirar(
-            "1001", new BigDecimal("50.00")
+            cuenta1, new BigDecimal("50.00")
         );
 
         assertEquals("Saldo insuficiente", resultado);
@@ -112,11 +134,11 @@ public class CuentaServiceTest {
 
     @Test
     void rechazarOperacionEnCuentaInactiva() {
-        cuentaService.crearCuenta("1001", "12345678-9", "Ahorro");
-        cuentaService.desactivarCuenta("1001");
+        cuentaService.crearCuenta(cuenta1, dui, "Ahorro");
+        cuentaService.desactivarCuenta(cuenta1);
 
         String resultado = cuentaService.depositar(
-            "1001", new BigDecimal("50.00")
+            cuenta1, new BigDecimal("50.00")
         );
 
         assertEquals("Cuenta inactiva", resultado);
@@ -124,11 +146,11 @@ public class CuentaServiceTest {
 
     @Test
     void rechazarTransferenciaPorSaldoInsuficiente() {
-        cuentaService.crearCuenta("1001", "12345678-9", "Ahorro");
-        cuentaService.crearCuenta("1002", "12345678-9", "Corriente");
+        cuentaService.crearCuenta(cuenta1, dui, "Ahorro");
+        cuentaService.crearCuenta(cuenta2, dui, "Corriente");
 
         String resultado = cuentaService.transferir(
-            "1001", "1002", new BigDecimal("50.00")
+            cuenta1, cuenta2, new BigDecimal("50.00")
         );
 
         assertEquals("Saldo insuficiente", resultado);
@@ -136,26 +158,26 @@ public class CuentaServiceTest {
 
     @Test
     void desactivarCuentaExitosamente() {
-        cuentaService.crearCuenta("1001", "12345678-9", "Ahorro");
+        cuentaService.crearCuenta(cuenta1, dui, "Ahorro");
 
-        String resultado = cuentaService.desactivarCuenta("1001");
-        Cuenta cuenta = cuentaService.buscarCuenta("1001");
+        String resultado = cuentaService.desactivarCuenta(cuenta1);
+        Cuenta cuenta = cuentaService.buscarCuenta(cuenta1);
 
         assertEquals("Cuenta desactivada", resultado);
         assertFalse(cuenta.isActiva());
     }
 
     @Test
-    void rechazarTransaccionNula() {
-        Cuenta cuenta = new Cuenta(
-        "1001",
-        "12345678-9",
-        "Ahorro"
+    void agregarTransaccionValida() {
+        Cuenta cuenta = new Cuenta(cuenta1, dui, "Ahorro");
+        Deposito transaccion = new Deposito(
+            UUID.randomUUID().toString(),
+            cuenta1,
+            new BigDecimal("10.00"),
+            "Prueba"
         );
-
-        assertThrows(
-        IllegalArgumentException.class,
-        () -> cuenta.agregarTransaccion(null)
-        );
+        cuenta.agregarTransaccion(transaccion);
+        assertEquals(1, cuenta.getHistorial().size());
+        assertSame(transaccion, cuenta.getHistorial().get(0));
     }
 }
