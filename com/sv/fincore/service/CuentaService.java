@@ -10,6 +10,7 @@ import com.sv.fincore.model.Transferencia;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -233,33 +234,33 @@ public class CuentaService {
         hilo.start();
         return "Generando reporte en segundo plano: " + ruta;
     }
+
+    /**
+     * Simulación demostrativa. No cambia saldos, historial ni persistencia.
+     * La tasa del 2% es un ejemplo, no una regla de negocio aprobada.
+     */
     public synchronized void calcularIntereses() {
-        System.out.println("Calculando intereses para todas las cuentas activas...");
+        BigDecimal tasaDemostrativa = new BigDecimal("0.02");
+
+        System.out.println("Simulación de intereses (no se aplicarán a las cuentas):");
 
         for (Cuenta cuenta : listaCuentas) {
             if (cuenta.isActiva()) {
-                BigDecimal interes = cuenta.getSaldo().multiply(new BigDecimal("0.02")); // 2% de interés
-                cuenta.setSaldo(cuenta.getSaldo().add(interes));
+                BigDecimal estimado = cuenta.getSaldo()
+                        .multiply(tasaDemostrativa)
+                        .setScale(2, RoundingMode.HALF_UP);
 
-                Transaccion transaccion = new Deposito(
-                        UUID.randomUUID().toString(),
+                System.out.printf(
+                        "Cuenta %s | saldo actual: %s | interés hipotético: %s (no aplicado)%n",
                         cuenta.getNumeroCuenta(),
-                        interes,
-                        "Interés generado automáticamente"
+                        cuenta.getSaldo(),
+                        estimado
                 );
-
-                cuenta.agregarTransaccion(transaccion);
-
-                try {
-                    cuentaDAO.guardar(cuenta);
-                    System.out.println("Interés aplicado a la cuenta " + cuenta.getNumeroCuenta());
-                } catch (IOException e) {
-                    System.out.println("Error al guardar la cuenta " + cuenta.getNumeroCuenta());
-                }
             }
         }
 
-        System.out.println("Cálculo de intereses completado.");
+        System.out.println(
+                "Simulación completada. Falta definir y autorizar fórmula y período."
+        );
     }
-
 }
