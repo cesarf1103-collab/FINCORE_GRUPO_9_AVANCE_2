@@ -6,7 +6,7 @@ import com.sv.fincore.util.ArchivoUtil;
 import java.io.IOException;
 import java.util.*;
 
-public class ClienteDAO {
+public class ClienteDAO implements CrudRepository<Cliente, String> {
 
     private static final String RUTA = "datos/clientes.dat";
 
@@ -16,11 +16,13 @@ public class ClienteDAO {
         this.clientes = ArchivoUtil.cargar(RUTA, new HashMap<>());
     }
 
+    @Override
     public void guardar(Cliente c) throws IOException {
         clientes.put(c.getId(), c);
         persistir();
     }
 
+    @Override
     public Cliente buscarPorId(String id) {
         return clientes.get(id);
     }
@@ -32,10 +34,12 @@ public class ClienteDAO {
                 .orElse(null);
     }
 
+    @Override
     public List<Cliente> listar() {
         return new ArrayList<>(clientes.values());
     }
 
+    @Override
     public boolean eliminar(String id) throws IOException {
         if (clientes.remove(id) != null) {
             persistir();
