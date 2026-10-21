@@ -27,37 +27,20 @@ public class Main {
         TransaccionController transaccionController =
                 new TransaccionController(cuentaService);
 
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        ProcesadorReportesTask simulacionIntereses =
+                new ProcesadorReportesTask(cuentaService);
+
         MenuPrincipal menuPrincipal = new MenuPrincipal(
                 clienteController,
                 cuentaController,
-                transaccionController
+                transaccionController,
+                executor,
+                simulacionIntereses
         );
 
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-
         try {
-            executor.submit(() -> {
-                try {
-                    new ProcesadorReportesTask(cuentaService).run();
-                } catch (RuntimeException e) {
-                    System.err.println(
-                            "Falló la simulación de intereses: " + e.getMessage()
-                    );
-                }
-            });
-
-            executor.submit(() -> {
-                try {
-                    System.out.println(
-                            cuentaService.generarReporteEnSegundoPlano()
-                    );
-                } catch (RuntimeException e) {
-                    System.err.println(
-                            "Falló la solicitud del reporte: " + e.getMessage()
-                    );
-                }
-            });
-
             menuPrincipal.iniciar();
         } finally {
             cerrarExecutor(executor);
