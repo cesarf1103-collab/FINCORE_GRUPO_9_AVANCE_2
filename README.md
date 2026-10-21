@@ -1,5 +1,5 @@
 # FINCORE_GRUPO_9_AVANCE_2
-Proyecto FinCore - Avance 2 | Programación II | Grupo 9
+Proyecto Final FinCore  | Programación II | Grupo 9
 ## Flujo de trabajo
 
 1. Revisar la Issue asignada.
