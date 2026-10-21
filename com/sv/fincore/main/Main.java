@@ -1,3 +1,4 @@
+
 package com.sv.fincore.main;
 
 import com.sv.fincore.controller.ClienteController;
@@ -14,6 +15,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
 
+    private static final String ARGUMENTO_SIMULAR_INTERESES =
+            "--simular-intereses";
     private static final int TIEMPO_CIERRE_SEGUNDOS = 30;
 
     public static void main(String[] args) {
@@ -27,24 +30,42 @@ public class Main {
         TransaccionController transaccionController =
                 new TransaccionController(cuentaService);
 
-        ExecutorService executor = Executors.newFixedThreadPool(2);
+        ExecutorService executor = null;
 
-        ProcesadorReportesTask simulacionIntereses =
-                new ProcesadorReportesTask(cuentaService);
+        if (solicitoSimulacion(args)) {
+            executor = Executors.newSingleThreadExecutor();
+
+            executor.submit(() -> {
+                try {
+                    new ProcesadorReportesTask(cuentaService).run();
+                } catch (RuntimeException e) {
+                    System.err.println(
+                            "Falló la simulación de intereses: "
+                                    + e.getMessage()
+                    );
+                }
+            });
+        }
 
         MenuPrincipal menuPrincipal = new MenuPrincipal(
                 clienteController,
                 cuentaController,
-                transaccionController,
-                executor,
-                simulacionIntereses
+                transaccionController
         );
 
         try {
             menuPrincipal.iniciar();
         } finally {
-            cerrarExecutor(executor);
+            if (executor != null) {
+                cerrarExecutor(executor);
+            }
         }
+    }
+
+    private static boolean solicitoSimulacion(String[] args) {
+        return args != null
+                && args.length == 1
+                && ARGUMENTO_SIMULAR_INTERESES.equals(args[0]);
     }
 
     private static void cerrarExecutor(ExecutorService executor) {
