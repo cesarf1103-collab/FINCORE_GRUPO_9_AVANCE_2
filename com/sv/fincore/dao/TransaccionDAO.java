@@ -49,18 +49,12 @@ public class TransaccionDAO implements CrudRepository<Transaccion, String> {
                         Collectors.counting()));
     }
 
-    @Override
-    public boolean eliminar(String id) throws IOException {
-        Transaccion transaccion = buscarPorId(id);
-
-        if (transaccion != null) {
-            transacciones.remove(transaccion);
-            persistir();
-            return true;
-        }
-
-        return false;
-    }
+@Override
+public boolean eliminar(String id) throws IOException {
+    throw new UnsupportedOperationException(
+        "Las transacciones registradas no pueden eliminarse"
+    );
+}
 
     private void persistir() throws IOException {
         ArchivoUtil.guardar(RUTA, transacciones);
