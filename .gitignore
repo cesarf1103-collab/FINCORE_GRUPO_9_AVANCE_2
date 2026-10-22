@@ -26,3 +26,4 @@ replay_pid*
 # Persistencia FinCore (.dat)
 *.dat
 datos/
+/target/

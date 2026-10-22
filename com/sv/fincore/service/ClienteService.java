@@ -1,23 +1,28 @@
 package com.sv.fincore.service;
 
 import com.sv.fincore.dao.ClienteDAO;
-import java.io.IOException;
+import com.sv.fincore.dao.ClienteRepository;
 import com.sv.fincore.model.Cliente;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteService {
-    private final ClienteDAO clienteDAO;
+    private final ClienteRepository clienteDAO;
     private List<Cliente> listaClientes = new ArrayList<>();
 
     public ClienteService() {
-    try {
-        clienteDAO = new ClienteDAO();
-        listaClientes = clienteDAO.listar();
-    } catch (IOException | ClassNotFoundException e) {
-        throw new IllegalStateException("No se pudieron cargar los clientes", e);
+        this(new ClienteDAO());
     }
-}
+
+    public ClienteService(ClienteRepository clienteDAO) {
+        this.clienteDAO = clienteDAO;
+        try {
+            listaClientes = clienteDAO.listar();
+        } catch (SQLException e) {
+            throw new IllegalStateException("No se pudieron cargar los clientes", e);
+        }
+    }
 
     public String registrarCliente(Cliente nuevoCliente) {
         for (Cliente c : listaClientes) {
@@ -28,7 +33,7 @@ public class ClienteService {
         listaClientes.add(nuevoCliente);
         try {
     clienteDAO.guardar(nuevoCliente);
-} catch (IOException e) {
+} catch (SQLException e) {
     listaClientes.remove(nuevoCliente);
     return "No se pudo guardar el cliente";
 }
@@ -79,7 +84,7 @@ public String modificarCliente(String dui, String nuevoNombre, String nuevosApel
     try {
         clienteDAO.guardar(cliente);
         return "Cliente actualizado";
-    } catch (IOException e) {
+    } catch (SQLException e) {
         cliente.setNombre(nombreAnterior);
         cliente.setApellidos(apellidosAnteriores);
         cliente.setCorreo(correoAnterior);
@@ -89,7 +94,7 @@ public String modificarCliente(String dui, String nuevoNombre, String nuevosApel
     }
 }
 
-    public void guardarCliente(Cliente cliente) throws IOException {
+    public void guardarCliente(Cliente cliente) throws SQLException {
     clienteDAO.guardar(cliente);
 }
     public String eliminarCliente(String dui) {
@@ -98,7 +103,7 @@ public String modificarCliente(String dui, String nuevoNombre, String nuevosApel
             try {
     clienteDAO.eliminar(cliente.getId());
     listaClientes.remove(cliente);
-} catch (IOException e) {
+} catch (SQLException e) {
     return "No se pudo eliminar el cliente";
 }
             return "Cliente eliminado";

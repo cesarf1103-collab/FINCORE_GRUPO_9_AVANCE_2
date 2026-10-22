@@ -37,11 +37,17 @@ public final class ReporteBancario implements Runnable {
     @Override
     public void run() {
         try {
-            Files.createDirectories(destino.getParent());
-            Files.write(destino, lineas, StandardCharsets.UTF_8);
+            generar();
             System.out.println("Reporte generado: " + destino);
         } catch (IOException e) {
             System.err.println("No se pudo generar el reporte: " + e.getMessage());
         }
+    }
+
+    public Path generar() throws IOException {
+        Path parent = destino.getParent();
+        if (parent != null) Files.createDirectories(parent);
+        Files.write(destino, lineas, StandardCharsets.UTF_8);
+        return destino;
     }
 }

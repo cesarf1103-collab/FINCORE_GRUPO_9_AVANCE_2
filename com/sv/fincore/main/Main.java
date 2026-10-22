@@ -59,6 +59,7 @@ public class Main {
             if (executor != null) {
                 cerrarExecutor(executor);
             }
+            cuentaService.close();
         }
     }
 
