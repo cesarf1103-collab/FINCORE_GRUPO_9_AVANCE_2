@@ -30,7 +30,9 @@ mvn clean compile
 mvn clean test
 ```
 
-La suite contiene **107 pruebas**, incluidos los [17 escenarios funcionales](docs/Matriz_de_Pruebas.md). Surefire utiliza H2 en memoria; la prueba de persistencia tras reinicio crea su propio archivo en un directorio temporal de JUnit. Las pruebas no usan las bases locales de demostración. También se verifican Mockito, herencia, rollback, concurrencia y protección del historial.
+La suite contiene **120 pruebas en 21 clases**, incluidos los [17 escenarios funcionales](docs/Matriz_de_Pruebas.md). Surefire utiliza H2 en memoria; la prueba de persistencia tras reinicio crea su propio archivo en un directorio temporal de JUnit. Las pruebas no usan las bases locales de demostración. También se verifican Mockito, herencia, rollback, concurrencia y protección del historial.
+
+Las 13 pruebas adicionales de servicios se distribuyen entre `ClienteServiceMockitoTest` (8) y `CuentaServiceMockitoTest` (5). Inyectan repositorios simulados para comprobar validaciones, delegación, rechazo de operaciones y conservación de causas de error sin abrir H2. Complementan las pruebas JDBC; no sustituyen las verificaciones de atomicidad y persistencia. La validación local del 24 de octubre de 2026 con Java 17.0.20.1 y Maven 3.9.16 terminó con **120 pruebas aprobadas, 0 fallos, 0 errores y 0 omitidas**.
 
 ## Consola
 
@@ -92,6 +94,7 @@ Se pueden ajustar mediante `FINCORE_POOL_*` o `fincore.pool.*`; por ejemplo, `FI
 
 ## Documentación del equipo
 
+- [Informe académico final: arquitectura, UML y pruebas](Documentación_Final.md).
 - [Historias de usuario y criterios](docs/Historias_de_Usuario.md).
 - [Matriz de 17 escenarios funcionales](docs/Matriz_de_Pruebas.md).
 - [Evidencias históricas de calidad y POO](docs/PruebasTecnicasPOO.md).
