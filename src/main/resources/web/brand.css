@@ -1,0 +1,46 @@
+.brand-official {
+  display: block;
+  padding-bottom: 30px;
+}
+
+.brand-mark {
+  display: block;
+  width: 66px;
+  height: 66px;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.brand-mark img {
+  display: block;
+  width: 252px;
+  max-width: none;
+  height: auto;
+  transform: translateY(-21.4px);
+}
+
+.hero > div:first-child {
+  flex: 1 1 52%;
+  min-width: 0;
+}
+
+.hero-art {
+  flex: 0 1 42%;
+  min-width: 0;
+}
+
+.hero-logo {
+  display: block;
+  width: min(330px, 100%);
+  height: auto;
+  border-radius: 14px;
+  box-shadow: 0 18px 50px #00101e55;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 920px) {
+  .brand-official {
+    padding-bottom: 12px;
+  }
+}

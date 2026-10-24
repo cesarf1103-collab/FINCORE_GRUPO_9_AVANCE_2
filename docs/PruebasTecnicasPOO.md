@@ -1,54 +1,29 @@
-# Pruebas Técnicas para verificar principios de POO
-1. Pruebas de análisis estático (revisión de estructura)
+# Pruebas técnicas de POO y evidencias de calidad
 
-Se analiza el código fuente para verificar que cumplan con los principios POO.
+Las capturas conservadas proceden de la revisión anterior aportada por Iris. Documentan el trabajo de calidad del equipo y los problemas encontrados en aquella versión. **No son mediciones actuales de la rama integrada.** SonarQube, Qodana y MetricsReloaded deben ejecutarse nuevamente para obtener resultados de esta versión.
 
-a) *Verificación de Encapsulamiento*: se inspecciona que los atributos de las clases sean *private* o *protected* y que se accedan a ellos a través de métodos *getters* y *setters*.
+## Evidencias históricas
 
-Checklist de clases (si cumple se coloca PASS)
-- Administrador: PASS
-- AtencionCliente: PASS
-- Cajero: PASS
-- Cliente: PASS
-- Transaccion: PASS
-- Usuario: PASS
-- ClienteDAO: PASS
-- CuentaDAO: PASS
-- TransaccionDAO: PASS
-- ClienteService: PASS
-- CuentaService: PASS
+| Evidencia | Qué permite comprobar |
+|---|---|
+| [Resumen SonarQube](SonarResume.png) | Resultado histórico del proyecto analizado; muestra incidencias y cobertura reportada en esa ejecución. |
+| [Incidencias SonarQube](SonarIssues.png) | Ejemplos de problemas de mantenibilidad y fiabilidad detectados. |
+| [Qodana en IntelliJ](QodanaConsola.png) | Once hallazgos históricos, incluidos paquetes incorrectos y problemas de serialización. |
+| [Resumen Qodana](qodanaReume.png) | Once hallazgos y una advertencia sobre 17 problemas de preparación que podían afectar al análisis. La advertencia no equivale a 17 fallos funcionales. |
+| [Métricas de clases](Metrcis.png) | Valores históricos de CBO, DIT, LCOM, NOC, RFC y WMC; no deben citarse como métricas recalculadas de esta entrega. |
+| [Estructura anterior](estructuraProyecto.png) | Organización de paquetes que motivó los ajustes de herencia y estructura Maven. |
 
-Para realizar una verificación más profunda se usa SonarQube integrado con Maven y también se utiliza Qodana que está integrado en Intellij.
-El primer paso para ejecutar la verificación con Maven es crear el archivo pom.xml en la raíz del proyecto y luego ejecutar 'mvn clean verify'. Del análisis de obtubieron los siguientes resultados.
+El informe original registró LCOM = 1 para los servicios y señaló oportunidades de mejora en herencia y acoplamiento. Son resultados históricos y no demuestran por sí solos la calidad de la versión actual. Los documentos originales y la captura antigua de seis pruebas JUnit se preservaron en los materiales de exposición externos al repositorio.
 
-![img.png](MavenResults.png)
-![img.png](SonarResume.png)
-![img.png](SonarIssues.png)
+## Evidencia en el código actual
 
-En general, el código cumple con los pricipios de POO, sin embargo hay issues de calidad que afectan el mantenimiento del código.
+- **Encapsulamiento:** `Cliente` y `Cuenta` protegen sus colecciones con vistas no modificables; [ClienteYCuentaTest](../src/test/java/com/sv/fincore/model/ClienteYCuentaTest.java) comprueba ese contrato.
+- **Herencia y polimorfismo:** `Cliente` y `modulo.empleado.Empleado` heredan de `Persona`; los tres roles heredan de `Empleado`. [PersonaJerarquiaTest](../src/test/java/com/sv/fincore/audit/PersonaJerarquiaTest.java) comprueba la jerarquía. Los modelos de roles con nombres iguales en `com.sv.fincore.model` son clases históricas independientes con otros constructores y se conservan por compatibilidad; no son la jerarquía probada.
+- **Cohesión y acoplamiento:** las vistas delegan en controladores, los servicios aplican reglas mediante interfaces de repositorio y los DAO ejecutan JDBC. `CuentaService` aún coordina reportes y el servidor web instancia un DAO para el resumen; esta descripción no constituye una medición nueva de LCOM o CBO.
+- **Pruebas:** [ClienteControllerTest](../src/test/java/com/sv/fincore/controller/ClienteControllerTest.java) utiliza Mockito para verificar delegación. Los [17 escenarios](Matriz_de_Pruebas.md) y las pruebas H2 comprueban operaciones y persistencia. Las pruebas automatizadas no sustituyen un recorrido manual de todos los formularios.
 
-Con Qodana se crea el archivo *qodana.yaml* y el reporte se puede abrir el browser: http://localhost:63342/qodana.ide/idea.html?projectKey=d2ce2292ca29d5ec336df748bed48031&_qdt=e8bd9044-710d-402f-a008-a3c3a77be0e5&theme=dark
-![img.png](QodanaConsola.png)
-El análisis identifica 17 issues, estos issues se revisarán uno a uno y los comentarios serán agregados en las clases correspondientes para su corrección.
-![img_1.png](qodanaReume.png)
+## Configuración de Qodana
 
-b) *Validación de jerarquías (herencia y polimorfismo)*: 
-Se ha creado la clase Persona de la cual deben heredar Empleado, Cliente y Usuario. Al inicio de la creación del repositorio y la separación de roles, se creó una estructura del proyecto:
-![img.png](estructuraProyecto.png)
+[qodana.yaml](../qodana.yaml) conserva el perfil `qodana.starter` y el analizador `jetbrains/qodana-jvm:2026.2`, con `projectJDK: "17"` para alinearse con Java 17. JetBrains documenta tanto esa versión del analizador como la descarga de JDK 17 mediante `projectJDK` en su [configuración de JVM](https://www.jetbrains.com/help/qodana/jvm.html#configuring-the-jdk).
 
-Luego se creó la clase Persona y Empleado y se colocaron en la carpeta  src/main/java/modulo, pero esto genera duplicidad de argumentos en las clases porque no se está usando la Herencia. Para corregir el issue se propone el cambio de estructura a:
-
-src/main/java/com/sv/fincore/model
-Dentro de model vivirán las clases: Persona (clase abstracta), Cliente (extends Persona), Empleado (clase abstracta y extends Persona) y Usuario (extends Persona).
-
-c) *Métricas de cohesión y acoplamiento*:
-
-Con el plugin **MetricsReloaded** se pueden calcular las métricas LCOM (Lack of Cohesion of Methods), estas métricas miden si los métodos de una clase usan los mismos atributos. Un LCOM alto indica baja cohesión, la clase hace demasiadas cosas y rompe el principio de Responsabilidad Única.
-Otra métrica importante es CBO (Coupling Between Objects), que mide cuántas otras clases conoce una clase. Un CBO alto indica acoplamiento excesivo, lo que dificulta la reutilización, miemtras sea bajo, es más fácil de mantener aislado. 
-
-Resultados obtenidos en la primera prueba:
-![img.png](Metrcis.png)
-
-Según los resultados obtenidos se evidencia el issue de la falta de Herencia en las clases, con valores DIT (Depth of Inheritance Tree) = 1.
-
-LCOM = 1 en las clases ClienteService y CuentaService, reflejan alta cohesión en la lógica de negocio.
+Para obtener métricas actuales debe ejecutarse nuevamente el analizador con sus requisitos de instalación y licencia. No hay un resultado nuevo de análisis estático que permita declarar cerradas todas las observaciones de calidad.

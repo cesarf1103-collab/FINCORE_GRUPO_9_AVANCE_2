@@ -1,6 +1,6 @@
 package modulo.empleado;
 
-import modulo.persona.Persona;
+import com.sv.fincore.model.Persona;
 
 public abstract class Empleado extends Persona {
     private static final long serialVersionUID = 1L;

@@ -8,7 +8,7 @@
 
     <!-- Informacion del proyecto FinCore -->
     <groupId>com.sv.fincore</groupId>
-    <artifactId>FINCORE_GRUPO_9_AVANCE_2</artifactId>
+    <artifactId>fincore</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -16,10 +16,17 @@
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mockito.version>5.20.0</mockito.version>
+        <fincore.main.class>com.sv.fincore.main.Main</fincore.main.class>
     </properties>
 
     <!-- Dependencias del proyecto -->
     <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.20.2</version>
+        </dependency>
 
         <!-- JUnit 5 para pruebas unitarias -->
         <dependency>
@@ -28,39 +35,51 @@
             <version>5.13.4</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.3.232</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>2.14.0</version>
+        </dependency>
 
     </dependencies>
 
     <!-- Configuracion de compilacion Maven -->
     <build>
         <plugins>
-
-            <!-- Permite agregar carpetas adicionales
-                 al proceso de compilacion -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <fincore.db.url>jdbc:h2:mem:fincore_tests;DB_CLOSE_DELAY=-1</fincore.db.url>
+                        <fincore.db.user>sa</fincore.db.user>
+                        <fincore.db.seed>false</fincore.db.seed>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.6.2</version>
-
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-
-                        <configuration>
-                            <sources>
-                                <!-- Directorio adicional de FinCore -->
-                                <source>${project.basedir}/com</source>
-                            </sources>
-                        </configuration>
-
-                    </execution>
-                </executions>
-
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration><mainClass>${fincore.main.class}</mainClass></configuration>
             </plugin>
 
         </plugins>
