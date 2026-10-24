@@ -3,8 +3,10 @@ package com.sv.fincore.service;
 import com.sv.fincore.model.Cliente;
 import com.sv.fincore.model.Cuenta;
 import com.sv.fincore.model.Deposito;
-import com.sv.fincore.dao.CuentaDAO;
 import com.sv.fincore.dao.ClienteDAO;
+import com.sv.fincore.util.ConexionDB;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -50,10 +52,22 @@ public class CuentaServiceTest {
 
     @AfterEach
     void limpiarDatos() throws Exception {
-        CuentaDAO dao = new CuentaDAO();
-        dao.eliminar(cuenta1);
-        dao.eliminar(cuenta2);
+        // Solo elimina los movimientos de las cuentas únicas de esta prueba H2.
+        try (Connection c = ConexionDB.obtenerConexion();
+             PreparedStatement p = c.prepareStatement("DELETE FROM transacciones WHERE numero_cuenta IN (?, ?)")) {
+            p.setString(1, cuenta1);
+            p.setString(2, cuenta2);
+            p.executeUpdate();
+        }
+        // La limpieza de H2 no usa el DAO de negocio, que protege saldos e historial.
+        try (Connection c = ConexionDB.obtenerConexion();
+             PreparedStatement p = c.prepareStatement("DELETE FROM cuentas WHERE numero_cuenta IN (?, ?)")) {
+            p.setString(1, cuenta1);
+            p.setString(2, cuenta2);
+            p.executeUpdate();
+        }
         new ClienteDAO().eliminar(cliente.getId());
+        cuentaService.close();
     }
     @Test
     void crearCuentaExitosamente() {

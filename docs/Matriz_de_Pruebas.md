@@ -10,8 +10,8 @@ Verificar mediante pruebas funcionales que las principales operaciones del siste
 |---|---|---|---|---|---|
 | TC-001 | HU-001 | Registro exitoso de cliente | DUI válido, nombre y campos obligatorios completos | El cliente se registra correctamente | PASS |
 | TC-002 | HU-001 | Registro con DUI duplicado | DUI que ya existe en el sistema | El sistema rechaza el registro | PASS |
-| TC-003 | HU-001 | Registro con DUI inválido | DUI con formato incorrecto | El sistema rechaza la entrada y muestra un mensaje de error | FAIL |
-| TC-004 | HU-001 | Registro con campos obligatorios vacíos | Uno o más campos requeridos sin completar | El sistema solicita completar los campos obligatorios | FAIL |
+| TC-003 | HU-001 | Registro con DUI inválido | DUI con formato incorrecto | El sistema rechaza la entrada y muestra un mensaje de error | PASS |
+| TC-004 | HU-001 | Registro con campos obligatorios vacíos | Uno o más campos requeridos sin completar | El sistema solicita completar los campos obligatorios | PASS |
 | TC-005 | HU-002 | Depósito exitoso | Monto positivo mayor que $0.00 | El depósito se realiza y el saldo aumenta correctamente | PASS |
 | TC-006 | HU-002 | Depósito con monto negativo | Monto menor que $0.00 | El sistema rechaza la operación | PASS |
 | TC-007 | HU-003 | Retiro exitoso | Monto menor o igual al saldo disponible | El retiro se realiza y el saldo se actualiza correctamente | PASS |
@@ -27,10 +27,10 @@ Verificar mediante pruebas funcionales que las principales operaciones del siste
 | TC-017 | HU-007 | Retiro en ventanilla exitoso | Cuenta existente con saldo suficiente y monto válido | El sistema realiza el retiro y actualiza correctamente el saldo | PASS |
 ## Criterio de resultado
 
+Los 17 casos se ejecutan mediante `EscenariosFuncionalesTest` con H2 aislado. TC-003 y TC-004 recorren el submenú de clientes con entradas inválidas y comprueban que el registro solo llega a la base tras corregirlas.
+
+TC-017 comprueba el débito y el saldo mediante el retiro general del servicio. El control presencial de identidad se cubre adicionalmente con `retiroEnVentanillaExigeConfirmacionYCoincidenciaDeDui` en [ClienteYHistorialConsistenciaTest](../src/test/java/com/sv/fincore/integration/ClienteYHistorialConsistenciaTest.java) y con [MenuOperacionesTest](../src/test/java/com/sv/fincore/view/MenuOperacionesTest.java). El alcance se detalla en las [historias de usuario](Historias_de_Usuario.md).
+
 - **PASS:** el sistema se comporta de acuerdo con el resultado esperado.
 - **FAIL:** el sistema no cumple con el resultado esperado y se debe reportar el error.
 - **Pendiente:** la prueba todavía no ha sido ejecutada.
-
-## Errores encontrados
-
-Los errores encontrados durante la ejecución de las pruebas serán documentados para su posterior corrección.

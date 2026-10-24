@@ -26,3 +26,47 @@ replay_pid*
 # Persistencia FinCore (.dat)
 *.dat
 datos/
+/target/
+.idea/
+*.iml
+*.mv.db
+*.trace.db
+/.m2-audit/
+
+# Archivos auxiliares de H2
+*.h2.db
+*.lock.db
+*.temp.db
+*.newFile
+*.tempFile
+
+# Cachés y resultados locales de herramientas
+/.m2/
+/.cache/
+/.qodana/
+/.qodana-results/
+/.qodana-cache/
+/.vscode/
+/tools-fincore-local/
+/Tools-FinCore/
+
+# Sesiones, adjuntos e instrucciones locales de agentes
+/.agents/
+/AGENTS.md
+
+# Configuración privada y credenciales
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+settings.local.xml
+
+# Temporales del editor y del sistema
+*.tmp
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
